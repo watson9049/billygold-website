@@ -1,0 +1,26 @@
+# AI 部落格生成系統依賴
+openai>=1.0.0
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+lxml>=4.9.0
+python-dotenv>=1.0.0
+
+# 資料處理
+pandas>=2.0.0
+numpy>=1.24.0
+
+# 爬蟲相關
+scrapy>=2.11.0
+selenium>=4.15.0
+
+# 向量資料庫（可選）
+pinecone-client>=2.2.0
+
+# 日誌和工具
+loguru>=0.7.0
+tqdm>=4.65.0
+
+# 開發工具
+pytest>=7.4.0
+black>=23.0.0
+flake8>=6.0.0 

@@ -1,0 +1,148 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 自定義滾動條隱藏 */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Safari and Chrome */
+}
+
+/* 自定義動畫 */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* 自定義載入動畫 */
+@keyframes pulse-gold {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse-gold {
+  animation: pulse-gold 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* 自定義漸變背景 */
+.bg-gradient-gold {
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%);
+}
+
+.bg-gradient-silver {
+  background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 50%, #9ca3af 100%);
+}
+
+/* 自定義陰影 */
+.shadow-gold {
+  box-shadow: 0 10px 25px -5px rgba(251, 191, 36, 0.3), 0 10px 10px -5px rgba(251, 191, 36, 0.1);
+}
+
+.shadow-gold-hover {
+  box-shadow: 0 20px 40px -10px rgba(251, 191, 36, 0.4), 0 10px 20px -5px rgba(251, 191, 36, 0.2);
+}
+
+/* 自定義按鈕樣式 */
+.btn-gold {
+  background: linear-gradient(to right, #f59e0b, #d97706);
+  color: white;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 25px -5px rgba(251, 191, 36, 0.3), 0 10px 10px -5px rgba(251, 191, 36, 0.1);
+  transition: all 0.2s;
+  transform: scale(1);
+  outline: none;
+}
+
+.btn-gold:hover {
+  box-shadow: 0 20px 40px -10px rgba(251, 191, 36, 0.4), 0 10px 20px -5px rgba(251, 191, 36, 0.2);
+  transform: scale(1.05);
+}
+
+.btn-gold:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px #f59e0b, 0 0 0 4px rgba(245, 158, 11, 0.2);
+}
+
+.btn-gold-outline {
+  border: 2px solid #f59e0b;
+  color: #d97706;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+}
+
+.btn-gold-outline:hover {
+  background: #f59e0b;
+  color: white;
+}
+
+.btn-gold-outline:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px #f59e0b, 0 0 0 4px rgba(245, 158, 11, 0.2);
+}
+
+/* 自定義卡片樣式 */
+.card-gold {
+  background: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e5e7eb;
+  transition: all 0.3s;
+}
+
+.card-gold:hover {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  border-color: #fbbf24;
+}
+
+/* 自定義文字樣式 */
+.text-gold {
+  color: #d97706;
+}
+
+.text-gold-dark {
+  color: #92400e;
+}
+
+/* 響應式文字大小 */
+@media (max-width: 640px) {
+  .text-responsive-sm {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  .text-responsive-md {
+    font-size: 1rem;
+    line-height: 1.5rem;
+  }
+}
+
+@media (min-width: 1025px) {
+  .text-responsive-lg {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+  }
+} 

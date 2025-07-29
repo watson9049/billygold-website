@@ -1,0 +1,29 @@
+{
+  "name": "silver-jewelry-ai-brain",
+  "version": "1.0.0",
+  "description": "銀樓智慧大腦 - 彈性報價電商系統",
+  "main": "server/index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run server:dev\" \"npm run client:dev\"",
+    "server:dev": "cd server && npm run dev",
+    "client:dev": "cd client && npm run dev",
+    "build": "cd client && npm run build",
+    "start": "cd server && npm start",
+    "install:all": "npm install && cd server && npm install && cd ../client && npm install"
+  },
+  "keywords": [
+    "silver",
+    "jewelry",
+    "ai",
+    "ecommerce",
+    "price-engine"
+  ],
+  "author": "銀樓智慧大腦團隊",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.2.0"
+  }
+}
