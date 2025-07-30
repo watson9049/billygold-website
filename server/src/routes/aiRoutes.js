@@ -3,8 +3,16 @@ const router = express.Router()
 const OpenAI = require('openai')
 require('dotenv').config()
 
+// 檢查API金鑰
+const apiKey = process.env.OPENAI_API_KEY
+if (!apiKey || apiKey === 'your_openai_api_key') {
+  console.error('❌ OpenAI API金鑰未設定或無效')
+} else {
+  console.log('✅ OpenAI API金鑰已設定')
+}
+
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+  apiKey: apiKey,
 })
 
 // 本地建議與歷史功能
@@ -40,7 +48,13 @@ const aiService = new AIService()
 
 // 呼叫 OpenAI GPT
 async function generateOpenAIResponse(message, context = []) {
-  const systemPrompt = `你是「黃金比例」的專業投資顧問「比例先生」，專門提供黃金投資相關的專業建議。
+  try {
+    // 檢查API金鑰
+    if (!apiKey || apiKey === 'your_openai_api_key') {
+      throw new Error('OpenAI API金鑰未設定')
+    }
+
+    const systemPrompt = `你是「黃金比例」的專業投資顧問「比例先生」，專門提供黃金投資相關的專業建議。
 
 你的專業領域包括：
 - 黃金投資策略和風險評估
@@ -66,22 +80,37 @@ async function generateOpenAIResponse(message, context = []) {
 
 請根據用戶的問題提供專業、貼心的建議。`
 
-  const messages = [
-    { role: 'system', content: systemPrompt },
-    ...((context||[]).map(msg => ({
-      role: msg.role === 'user' ? 'user' : 'assistant',
-      content: msg.content
-    }))),
-    { role: 'user', content: message }
-  ]
-  
-  const completion = await openai.chat.completions.create({
-    model: 'gpt-3.5-turbo',
-    messages,
-    temperature: 0.7,
-    max_tokens: 800
-  })
-  return completion.choices[0].message.content
+    const messages = [
+      { role: 'system', content: systemPrompt },
+      ...((context||[]).map(msg => ({
+        role: msg.role === 'user' ? 'user' : 'assistant',
+        content: msg.content
+      }))),
+      { role: 'user', content: message }
+    ]
+    
+    console.log('🤖 發送請求到OpenAI...')
+    const completion = await openai.chat.completions.create({
+      model: 'gpt-3.5-turbo',
+      messages,
+      temperature: 0.7,
+      max_tokens: 800
+    })
+    
+    console.log('✅ OpenAI回應成功')
+    return completion.choices[0].message.content
+  } catch (error) {
+    console.error('❌ OpenAI API錯誤:', error.message)
+    if (error.code === 'invalid_api_key') {
+      throw new Error('API金鑰無效，請檢查設定')
+    } else if (error.code === 'insufficient_quota') {
+      throw new Error('API配額不足，請檢查帳戶餘額')
+    } else if (error.code === 'rate_limit_exceeded') {
+      throw new Error('API請求過於頻繁，請稍後再試')
+    } else {
+      throw new Error(`OpenAI服務錯誤: ${error.message}`)
+    }
+  }
 }
 
 // AI 聊天（OpenAI）
@@ -91,10 +120,15 @@ router.post('/chat', async (req, res) => {
     if (!message || !message.trim()) {
       return res.status(400).json({ success: false, message: '請輸入有效的訊息' })
     }
+
+    console.log('📝 收到聊天請求:', message.substring(0, 50) + '...')
+    
     const aiReply = await generateOpenAIResponse(message, context || [])
+    
     // 儲存對話歷史（這裡簡化處理，實際應有用戶ID）
     const userId = 'anonymous'
     aiService.saveConversation(userId, message, aiReply)
+    
     res.json({
       success: true,
       message: aiReply,
@@ -102,36 +136,42 @@ router.post('/chat', async (req, res) => {
       timestamp: new Date().toISOString()
     })
   } catch (error) {
-    console.error('OpenAI 回應失敗:', error?.response?.data || error)
+    console.error('❌ AI聊天錯誤:', error.message)
     res.status(500).json({
       success: false,
-      message: 'AI助手暫時無法回應，請稍後再試。'
+      message: error.message || 'AI助手暫時無法回應，請稍後再試。'
     })
   }
 })
 
 // 狀態/建議/歷史/評價維持本地功能
 router.get('/status', (req, res) => {
+  const hasApiKey = apiKey && apiKey !== 'your_openai_api_key'
   res.json({
-    status: 'online',
-    message: 'AI 服務正常運行',
+    status: hasApiKey ? 'online' : 'offline',
+    message: hasApiKey ? 'AI 服務正常運行' : 'API金鑰未設定',
     timestamp: new Date().toISOString(),
-    version: '1.0.0'
+    version: '1.0.0',
+    hasApiKey: hasApiKey
   })
 })
+
 router.get('/suggestions', (req, res) => {
   res.json({ suggestions: aiService.getSuggestions() })
 })
+
 router.get('/history/:userId', (req, res) => {
   const { userId } = req.params
   const history = aiService.conversationHistory.get(userId) || []
   res.json({ history: history.slice(-20) })
 })
+
 router.delete('/history/:userId', (req, res) => {
   const { userId } = req.params
   aiService.conversationHistory.delete(userId)
   res.json({ success: true, message: '對話歷史已清除' })
 })
+
 router.post('/rate', (req, res) => {
   const { messageId, rating, feedback } = req.body
   console.log('AI 回應評價:', { messageId, rating, feedback })
