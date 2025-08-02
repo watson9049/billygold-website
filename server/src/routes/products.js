@@ -207,36 +207,6 @@ router.get('/', async (req, res) => {
 });
 
 /**
- * GET /api/products/:id
- * 獲取商品詳情
- */
-router.get('/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const product = mockProducts.find(p => p.id === id);
-
-    if (!product) {
-      return res.status(404).json({
-        success: false,
-        error: '商品不存在'
-      });
-    }
-
-    res.json({
-      success: true,
-      data: product
-    });
-  } catch (error) {
-    console.error('獲取商品詳情失敗:', error);
-    res.status(500).json({
-      success: false,
-      error: '獲取商品詳情失敗',
-      message: error.message
-    });
-  }
-});
-
-/**
  * GET /api/products/categories
  * 獲取商品分類
  */
@@ -275,6 +245,191 @@ router.get('/materials', async (req, res) => {
     res.status(500).json({
       success: false,
       error: '獲取商品材質失敗',
+      message: error.message
+    });
+  }
+});
+
+/**
+ * GET /api/products/:id
+ * 獲取商品詳情
+ */
+router.get('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const product = mockProducts.find(p => p.id === id);
+
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        error: '商品不存在'
+      });
+    }
+
+    res.json({
+      success: true,
+      data: product
+    });
+  } catch (error) {
+    console.error('獲取商品詳情失敗:', error);
+    res.status(500).json({
+      success: false,
+      error: '獲取商品詳情失敗',
+      message: error.message
+    });
+  }
+});
+
+/**
+ * POST /api/products
+ * 新增商品
+ */
+router.post('/', async (req, res) => {
+  try {
+    const {
+      name,
+      description,
+      weight,
+      material,
+      category,
+      design_style,
+      suitable_occasion,
+      craftsmanship_fee,
+      specifications,
+      features,
+      images
+    } = req.body;
+
+    // 驗證必填欄位
+    if (!name || !description || !weight || !material || !category) {
+      return res.status(400).json({
+        success: false,
+        error: '缺少必填欄位',
+        message: '請填寫商品名稱、描述、重量、材質和分類'
+      });
+    }
+
+    // 驗證重量
+    if (parseFloat(weight) <= 0) {
+      return res.status(400).json({
+        success: false,
+        error: '重量必須大於0',
+        message: '請輸入有效的重量'
+      });
+    }
+
+    // 生成新商品ID
+    const newId = (mockProducts.length + 1).toString();
+    
+    // 創建新商品
+    const newProduct = {
+      id: newId,
+      name,
+      description,
+      weight: parseFloat(weight),
+      material,
+      category,
+      design_style: design_style || '',
+      suitable_occasion: suitable_occasion || '',
+      craftsmanship_fee: parseFloat(craftsmanship_fee) || 0,
+      specifications: specifications || {},
+      features: features || [],
+      images: images || [],
+      is_active: true,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+
+    // 添加到模擬數據庫
+    mockProducts.push(newProduct);
+
+    console.log('新增商品成功:', newProduct);
+
+    res.status(201).json({
+      success: true,
+      message: '商品新增成功',
+      data: newProduct
+    });
+  } catch (error) {
+    console.error('新增商品失敗:', error);
+    res.status(500).json({
+      success: false,
+      error: '新增商品失敗',
+      message: error.message
+    });
+  }
+});
+
+/**
+ * PUT /api/products/:id
+ * 更新商品
+ */
+router.put('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updateData = req.body;
+
+    const productIndex = mockProducts.findIndex(p => p.id === id);
+    
+    if (productIndex === -1) {
+      return res.status(404).json({
+        success: false,
+        error: '商品不存在'
+      });
+    }
+
+    // 更新商品
+    mockProducts[productIndex] = {
+      ...mockProducts[productIndex],
+      ...updateData,
+      updated_at: new Date().toISOString()
+    };
+
+    res.json({
+      success: true,
+      message: '商品更新成功',
+      data: mockProducts[productIndex]
+    });
+  } catch (error) {
+    console.error('更新商品失敗:', error);
+    res.status(500).json({
+      success: false,
+      error: '更新商品失敗',
+      message: error.message
+    });
+  }
+});
+
+/**
+ * DELETE /api/products/:id
+ * 刪除商品
+ */
+router.delete('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const productIndex = mockProducts.findIndex(p => p.id === id);
+    
+    if (productIndex === -1) {
+      return res.status(404).json({
+        success: false,
+        error: '商品不存在'
+      });
+    }
+
+    // 軟刪除 - 設置為非活躍
+    mockProducts[productIndex].is_active = false;
+    mockProducts[productIndex].updated_at = new Date().toISOString();
+
+    res.json({
+      success: true,
+      message: '商品已下架'
+    });
+  } catch (error) {
+    console.error('刪除商品失敗:', error);
+    res.status(500).json({
+      success: false,
+      error: '刪除商品失敗',
       message: error.message
     });
   }

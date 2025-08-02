@@ -9,6 +9,16 @@ import BlogDetailPage from './pages/BlogDetailPage'
 import AdminPage from './pages/AdminPage'
 import ChatPage from './pages/ChatPage'
 import CRMPage from './pages/CRMPage'
+import LoginPage from './pages/LoginPage'
+import RegisterPage from './pages/RegisterPage'
+import ForgotPasswordPage from './pages/ForgotPasswordPage'
+import ResetPasswordPage from './pages/ResetPasswordPage'
+import ForgotUsernamePage from './pages/ForgotUsernamePage'
+import VerifyEmailPage from './pages/VerifyEmailPage'
+import CartPage from './pages/CartPage'
+import ProductUploadPage from './pages/ProductUploadPage'
+import ProductManagementPage from './pages/ProductManagementPage'
+import ProductEditPage from './pages/ProductEditPage'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import AIChatWidget from './components/AIChatWidget'
@@ -146,6 +156,16 @@ function App() {
           <Route path="/admin" element={<AdminPage />} />
           <Route path="/chat" element={<ChatPage />} />
           <Route path="/crm" element={<CRMPage />} />
+          <Route path="/cart" element={<CartPage />} />
+          <Route path="/admin/product-upload" element={<ProductUploadPage />} />
+          <Route path="/admin/product-management" element={<ProductManagementPage />} />
+          <Route path="/admin/product-edit/:id" element={<ProductEditPage />} />
+                          <Route path="/login" element={<LoginPage />} />
+                <Route path="/register" element={<RegisterPage />} />
+                <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                <Route path="/reset-password" element={<ResetPasswordPage />} />
+                <Route path="/forgot-username" element={<ForgotUsernamePage />} />
+                <Route path="/verify-email" element={<VerifyEmailPage />} />
         </Routes>
       </div>
 

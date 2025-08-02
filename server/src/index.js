@@ -23,7 +23,7 @@ app.use(morgan('combined'));
 // 速率限制
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15分鐘
-  max: 100, // 限制每個IP 15分鐘內最多100個請求
+  max: process.env.NODE_ENV === 'development' ? 1000 : 100, // 開發環境放寬限制
   message: '請求過於頻繁，請稍後再試'
 });
 app.use('/api/', limiter);
@@ -43,10 +43,14 @@ app.get('/health', (req, res) => {
 });
 
 // API 路由
+app.use('/api/auth', require('./routes/auth'));
 app.use('/api/products', require('./routes/products'));
 app.use('/api/prices', require('./routes/prices'));
 app.use('/api/blog', require('./routes/blogRoutes'));
 app.use('/api/ai', require('./routes/aiRoutes'));
+app.use('/api/customers', require('./routes/customers'));
+app.use('/api/cart', require('./routes/cart'));
+app.use('/api/simple-cart', require('./routes/simpleCart'));
 
 // Placeholder API for images
 app.get('/api/placeholder/:width/:height', (req, res) => {
@@ -55,16 +59,8 @@ app.get('/api/placeholder/:width/:height', (req, res) => {
 });
 
 // Other API endpoints (to be implemented)
-app.get('/api/customers', (req, res) => {
-  res.json({ message: 'Customers API endpoint' });
-});
-
 app.get('/api/orders', (req, res) => {
   res.json({ message: 'Orders API endpoint' });
-});
-
-app.get('/api/ai', (req, res) => {
-  res.json({ message: 'AI API endpoint' });
 });
 
 // 錯誤處理中間件

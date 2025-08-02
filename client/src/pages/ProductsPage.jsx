@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Crown, Search, Filter, Star, TrendingUp, Shield, ShoppingCart, Heart, User, ChevronDown, Menu, ArrowLeft, Award, Clock, Users } from 'lucide-react'
+import { cartService } from '../services/cartService'
+import { authService } from '../services/authService'
 
 function ProductsPage() {
   const [products, setProducts] = useState([])
@@ -10,6 +12,7 @@ function ProductsPage() {
     material: '',
     search: ''
   })
+  const [addingToCart, setAddingToCart] = useState({})
 
   // 模擬黃金條塊商品資料
   const mockProducts = [
@@ -219,6 +222,24 @@ function ProductsPage() {
     }).format(price)
   }
 
+  // 添加到購物車
+  const handleAddToCart = async (productId) => {
+    if (!authService.isAuthenticated()) {
+      alert('請先登入會員')
+      return
+    }
+
+    try {
+      setAddingToCart(prev => ({ ...prev, [productId]: true }))
+      await cartService.addToCart(productId, 1)
+      alert('商品已添加到購物車！')
+    } catch (error) {
+      alert('添加失敗：' + error.message)
+    } finally {
+      setAddingToCart(prev => ({ ...prev, [productId]: false }))
+    }
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -384,8 +405,17 @@ function ProductsPage() {
 
                     {/* 按鈕 */}
                     <div className="flex space-x-2">
-                      <button className="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-4 rounded-xl transition-colors">
-                        加入購物車
+                      <button 
+                        onClick={() => handleAddToCart(product.id)}
+                        disabled={addingToCart[product.id]}
+                        className="flex-1 bg-yellow-500 hover:bg-yellow-600 disabled:bg-gray-400 text-white font-bold py-3 px-4 rounded-xl transition-colors flex items-center justify-center space-x-2"
+                      >
+                        {addingToCart[product.id] ? (
+                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        ) : (
+                          <ShoppingCart className="w-4 h-4" />
+                        )}
+                        <span>{addingToCart[product.id] ? '添加中...' : '加入購物車'}</span>
                       </button>
                       <button className="p-3 text-gray-400 hover:text-red-500 transition-colors">
                         <Heart className="w-5 h-5" />

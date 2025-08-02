@@ -1,7 +1,9 @@
 import { useState } from 'react'
-import { Settings, TrendingUp, Clock, DollarSign, Save } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { Settings, TrendingUp, Clock, DollarSign, Save, Plus, Package, Users, BarChart3 } from 'lucide-react'
 
 function AdminPage() {
+  const navigate = useNavigate();
   const [priceSettings, setPriceSettings] = useState({
     updateInterval: 900000, // 15分鐘
     minInterval: 900000,
@@ -31,8 +33,65 @@ function AdminPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-serif font-bold text-gray-900 mb-2">價格管理後台</h1>
-          <p className="text-gray-600">管理金價更新頻率、匯率設定和工錢計算</p>
+          <h1 className="text-3xl font-serif font-bold text-gray-900 mb-2">管理後台</h1>
+          <p className="text-gray-600">管理商品、價格設定和系統功能</p>
+        </div>
+
+        {/* 快速操作卡片 */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div 
+            className="bg-white rounded-lg shadow p-6 cursor-pointer hover:shadow-lg transition-shadow"
+            onClick={() => navigate('/admin/product-upload')}
+          >
+            <div className="flex items-center">
+              <div className="p-3 bg-blue-100 rounded-lg">
+                <Plus className="w-6 h-6 text-blue-600" />
+              </div>
+              <div className="ml-4">
+                <h3 className="text-lg font-semibold text-gray-900">商品上架</h3>
+                <p className="text-sm text-gray-600">新增商品到系統</p>
+              </div>
+            </div>
+          </div>
+
+          <div 
+            className="bg-white rounded-lg shadow p-6 cursor-pointer hover:shadow-lg transition-shadow"
+            onClick={() => navigate('/admin/product-management')}
+          >
+            <div className="flex items-center">
+              <div className="p-3 bg-green-100 rounded-lg">
+                <Package className="w-6 h-6 text-green-600" />
+              </div>
+              <div className="ml-4">
+                <h3 className="text-lg font-semibold text-gray-900">商品管理</h3>
+                <p className="text-sm text-gray-600">查看和編輯商品</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-lg shadow p-6 cursor-pointer hover:shadow-lg transition-shadow">
+            <div className="flex items-center">
+              <div className="p-3 bg-purple-100 rounded-lg">
+                <Users className="w-6 h-6 text-purple-600" />
+              </div>
+              <div className="ml-4">
+                <h3 className="text-lg font-semibold text-gray-900">客戶管理</h3>
+                <p className="text-sm text-gray-600">管理客戶資料</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-lg shadow p-6 cursor-pointer hover:shadow-lg transition-shadow">
+            <div className="flex items-center">
+              <div className="p-3 bg-orange-100 rounded-lg">
+                <BarChart3 className="w-6 h-6 text-orange-600" />
+              </div>
+              <div className="ml-4">
+                <h3 className="text-lg font-semibold text-gray-900">銷售報表</h3>
+                <p className="text-sm text-gray-600">查看銷售數據</p>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
